@@ -18,11 +18,7 @@ import java.util.concurrent.TimeUnit
 
 val restModule = module {
 
-
-
     single<TypeAdapterFactory> { ItemTypeAdapterFactory() }
-
-
     single {
         GsonBuilder()
                 .registerTypeAdapterFactory(ItemTypeAdapterFactory())
@@ -30,7 +26,6 @@ val restModule = module {
                 .setDateFormat(DateDeserializer.DATE_FORMATS[0])
                 .create()
     }
-
 
     single {
 
@@ -48,14 +43,9 @@ val restModule = module {
         clientBuilder.build()
     }
 
-
-
-
     single {
         get<Retrofit>().create<Api>(Api::class.java)
     }
-
-
 
     // Retrofit
     single {

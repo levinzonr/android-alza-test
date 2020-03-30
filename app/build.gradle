@@ -73,9 +73,9 @@ android {
             applicationIdSuffix ".staging"
             //signingConfig signingConfigs.staging
             manifestPlaceholders = [
-                    APP_NAME        : "SpotON"
+                    APP_NAME        : "Alza"
             ]
-            buildConfigField "String", "API_URL", "\"https://api.spotify.com/\""
+            buildConfigField "String", "API_URL", "\"https://www.alza.cz/Services/RestService.svc/v2/products/\""
 
         }
         production {
@@ -83,9 +83,9 @@ android {
             applicationIdSuffix ".production"
             //signingConfig signingConfigs.production
             manifestPlaceholders = [
-                    APP_NAME        : "SpotON"
+                    APP_NAME        : "Alza"
             ]
-            buildConfigField "String", "API_URL", "\"https://api.spotify.com/\""
+            buildConfigField "String", "API_URL", "\"https://www.alza.cz/Services/RestService.svc/v2/products/\""
         }
     }
 }
