@@ -1,5 +1,8 @@
 package cz.levinzonr.spotistats.network.models
 
+import cz.levinzonr.spotistats.domain.models.DataModel
+import cz.levinzonr.spotistats.domain.models.ProductDetail
+
 data class ProductDetailResponse(
         val action_name: Any,
         val advertisements: List<Any>,
@@ -97,4 +100,13 @@ data class ProductDetailResponse(
         val video_list: List<VideoResponse>,
         val videos_cnt: Int,
         val warranty: String
-)
+) : DataModel<ProductDetail> {
+
+    override fun toDomain(): ProductDetail {
+        return ProductDetail(
+                id = id.toString(),
+                name = name,
+                description = desc
+        )
+    }
+}

@@ -1,5 +1,8 @@
 package cz.levinzonr.spotistats.network.models
 
+import cz.levinzonr.spotistats.domain.models.Category
+import cz.levinzonr.spotistats.domain.models.DataModel
+
 data class CategoryResponse(
         val cat_type: String,
         val cat_type_id: Int,
@@ -15,4 +18,13 @@ data class CategoryResponse(
         val show_as_tiles: Boolean,
         val type: String,
         val url: String
-)
+) : DataModel<Category> {
+
+    override fun toDomain(): Category {
+        return Category(
+                id = id.toString(),
+                name = name,
+                imageUrl = img
+        )
+    }
+}

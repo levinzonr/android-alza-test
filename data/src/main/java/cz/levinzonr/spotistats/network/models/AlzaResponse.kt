@@ -6,7 +6,7 @@ data class AlzaResponse<T>(
     val basket_total_cnt: Int,
     val countryID: Int,
     val countryPhonePrefix: String,
-    val `data`: List<T>,
+    val `data`: T,
     val data_cnt: Int,
     val err: Int,
     val favCnt: Int,
