@@ -1,4 +1,4 @@
-package cz.levinzonr.spotistats.network.util
+package cz.levinzonr.spotistats.util
 
 import okhttp3.ResponseBody
 import okio.BufferedSource

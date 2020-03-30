@@ -1,4 +1,4 @@
-package cz.levinzonr.spotistats.network.util
+package cz.levinzonr.spotistats.util
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred

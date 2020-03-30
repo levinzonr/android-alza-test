@@ -1,4 +1,4 @@
-package cz.levinzonr.spotistats.network.util
+package cz.levinzonr.spotistats.util
 
 import com.google.gson.Gson
 import com.google.gson.JsonElement

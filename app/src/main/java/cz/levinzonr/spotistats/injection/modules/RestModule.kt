@@ -5,13 +5,10 @@ import com.google.gson.TypeAdapterFactory
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import cz.levinzonr.spotistats.BuildConfig
 import cz.levinzonr.spotistats.network.Api
-import cz.levinzonr.spotistats.network.util.DateDeserializer
-import cz.levinzonr.spotistats.network.util.ItemTypeAdapterFactory
-import okhttp3.Authenticator
-import okhttp3.Interceptor
+import cz.levinzonr.spotistats.util.DateDeserializer
+import cz.levinzonr.spotistats.util.ItemTypeAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

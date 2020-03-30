@@ -1,5 +1,6 @@
-package cz.levinzonr.spotistats.network
+package cz.levinzonr.spotistats
 
+import cz.levinzonr.spotistats.network.Api
 import cz.levinzonr.spotistats.domain.models.Post
 import cz.levinzonr.spotistats.domain.repository.PostRepository
 import cz.levinzonr.spotistats.domain.repository.RepositoryException

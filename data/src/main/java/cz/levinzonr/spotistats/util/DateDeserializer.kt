@@ -1,4 +1,4 @@
-package cz.levinzonr.spotistats.network.util
+package cz.levinzonr.spotistats.util
 
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
