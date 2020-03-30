@@ -2,7 +2,7 @@ package cz.levinzonr.spotistats.presentation.extensions
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import cz.levinzonr.spotistats.domain.interactors.BaseAsyncInteractor
+import cz.levinzonr.spotistats.domain.interactors.Interactor
 import cz.levinzonr.spotistats.domain.interactors.CompleteResult
 import cz.levinzonr.spotistats.domain.interactors.Fail
 import cz.levinzonr.spotistats.domain.interactors.InteractorResult
@@ -24,24 +24,24 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
-interface LiveDataInteractor<T> : BaseAsyncInteractor<Unit> {
+interface LiveDataInteractor<T> : Interactor<Unit> {
     val liveData: LiveData<InteractorResult<T>>
 }
 
-interface ResultInteractor<T> : BaseAsyncInteractor<CompleteResult<T>>
+interface ResultInteractor<T> : Interactor<CompleteResult<T>>
 
 @ExperimentalCoroutinesApi
-interface ChannelInteractor<T> : BaseAsyncInteractor<Unit> {
+interface ChannelInteractor<T> : Interactor<Unit> {
     fun receive(): ReceiveChannel<InteractorResult<T>>
 }
 
-interface RxInteractor<T> : BaseAsyncInteractor<Unit> {
+interface RxInteractor<T> : Interactor<Unit> {
     fun observe(): Flowable<InteractorResult<T>>
 }
 
-interface FlowInteractor<T> : BaseAsyncInteractor<Flow<InteractorResult<T>>>
+interface FlowInteractor<T> : Interactor<Flow<InteractorResult<T>>>
 
-private class LiveDataInteractorImpl<T>(private val interactor: BaseAsyncInteractor<out T>) :
+private class LiveDataInteractorImpl<T>(private val interactor: Interactor<out T>) :
     LiveDataInteractor<T> {
     private val mutableLiveData = MutableLiveData<InteractorResult<T>>().apply {
         postValue(Uninitialized)
@@ -60,7 +60,7 @@ private class LiveDataInteractorImpl<T>(private val interactor: BaseAsyncInterac
 }
 
 @ExperimentalCoroutinesApi
-private class ChannelInteractorImpl<T>(private val interactor: BaseAsyncInteractor<out T>) :
+private class ChannelInteractorImpl<T>(private val interactor: Interactor<out T>) :
     ChannelInteractor<T> {
 
     private val channel = BroadcastChannel<InteractorResult<T>>(Channel.CONFLATED).apply {
@@ -79,7 +79,7 @@ private class ChannelInteractorImpl<T>(private val interactor: BaseAsyncInteract
     }
 }
 
-private class ResultInteractorImpl<T>(private val interactor: BaseAsyncInteractor<out T>) :
+private class ResultInteractorImpl<T>(private val interactor: Interactor<out T>) :
     ResultInteractor<T> {
     override suspend fun invoke(): CompleteResult<T> {
         return try {
@@ -90,7 +90,7 @@ private class ResultInteractorImpl<T>(private val interactor: BaseAsyncInteracto
     }
 }
 
-private class RxInteractorImpl<T>(private val interactor: BaseAsyncInteractor<out T>) :
+private class RxInteractorImpl<T>(private val interactor: Interactor<out T>) :
     RxInteractor<T> {
     override fun observe() = subject.toFlowable(BackpressureStrategy.LATEST)!!
     private val subject = BehaviorSubject.createDefault<InteractorResult<T>>(Uninitialized)
@@ -104,7 +104,7 @@ private class RxInteractorImpl<T>(private val interactor: BaseAsyncInteractor<ou
     }
 }
 
-private class FlowInteractorImpl<T>(private val interactor: BaseAsyncInteractor<out T>) :
+private class FlowInteractorImpl<T>(private val interactor: Interactor<out T>) :
     FlowInteractor<T> {
     override suspend fun invoke(): Flow<InteractorResult<T>> {
         return flow {
@@ -118,37 +118,37 @@ private class FlowInteractorImpl<T>(private val interactor: BaseAsyncInteractor<
     }
 }
 
-fun <T> BaseAsyncInteractor<T>.asResult(): ResultInteractor<T> {
+fun <T> Interactor<T>.asResult(): ResultInteractor<T> {
     return ResultInteractorImpl(this)
 }
 
-fun <T> BaseAsyncInteractor<T>.asLiveData(): LiveDataInteractor<T> {
+fun <T> Interactor<T>.asLiveData(): LiveDataInteractor<T> {
     return LiveDataInteractorImpl(this)
 }
 
 @ExperimentalCoroutinesApi
-fun <T> BaseAsyncInteractor<T>.asChannel(): ChannelInteractor<T> {
+fun <T> Interactor<T>.asChannel(): ChannelInteractor<T> {
     return ChannelInteractorImpl(this)
 }
 
-fun <T> BaseAsyncInteractor<T>.asRx(): RxInteractor<T> {
+fun <T> Interactor<T>.asRx(): RxInteractor<T> {
     return RxInteractorImpl(this)
 }
 
-fun <T> BaseAsyncInteractor<T>.asFlow(): FlowInteractor<T> {
+fun <T> Interactor<T>.asFlow(): FlowInteractor<T> {
     return FlowInteractorImpl(this)
 }
 
 fun CoroutineScope.launchInteractor(
-    interactor: BaseAsyncInteractor<Unit>,
-    coroutineContext: CoroutineContext = Dispatchers.IO
+        interactor: Interactor<Unit>,
+        coroutineContext: CoroutineContext = Dispatchers.IO
 ) {
     launch(coroutineContext) { interactor() }
 }
 
 suspend fun <T> runInteractor(
-    interactor: BaseAsyncInteractor<T>,
-    coroutineContext: CoroutineContext = Dispatchers.IO
+        interactor: Interactor<T>,
+        coroutineContext: CoroutineContext = Dispatchers.IO
 ): T {
     return withContext(coroutineContext) { interactor() }
 }
