@@ -24,133 +24,31 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
-interface LiveDataInteractor<T> : Interactor<Unit> {
-    val liveData: LiveData<InteractorResult<T>>
-}
 
-interface ResultInteractor<T> : Interactor<CompleteResult<T>>
+interface ResultInteractor<I, O> : Interactor<I, CompleteResult<O>>
 
-@ExperimentalCoroutinesApi
-interface ChannelInteractor<T> : Interactor<Unit> {
-    fun receive(): ReceiveChannel<InteractorResult<T>>
-}
-
-interface RxInteractor<T> : Interactor<Unit> {
-    fun observe(): Flowable<InteractorResult<T>>
-}
-
-interface FlowInteractor<T> : Interactor<Flow<InteractorResult<T>>>
-
-private class LiveDataInteractorImpl<T>(private val interactor: Interactor<out T>) :
-    LiveDataInteractor<T> {
-    private val mutableLiveData = MutableLiveData<InteractorResult<T>>().apply {
-        postValue(Uninitialized)
-    }
-
-    override val liveData = mutableLiveData
-    override suspend operator fun invoke() {
-        mutableLiveData.postValue(Loading())
-        try {
-            val result = interactor()
-            mutableLiveData.postValue(Success(result))
-        } catch (t: Throwable) {
-            mutableLiveData.postValue(Fail(t))
-        }
-    }
-}
-
-@ExperimentalCoroutinesApi
-private class ChannelInteractorImpl<T>(private val interactor: Interactor<out T>) :
-    ChannelInteractor<T> {
-
-    private val channel = BroadcastChannel<InteractorResult<T>>(Channel.CONFLATED).apply {
-        offer(Uninitialized)
-    }
-
-    override fun receive() = channel.openSubscription()
-
-    override suspend operator fun invoke() {
-        channel.offer(Loading())
-        try {
-            channel.offer(Success(interactor()))
-        } catch (t: Throwable) {
-            channel.offer(Fail(t))
-        }
-    }
-}
-
-private class ResultInteractorImpl<T>(private val interactor: Interactor<out T>) :
-    ResultInteractor<T> {
-    override suspend fun invoke(): CompleteResult<T> {
+private class ResultInteractorImpl<I, O>(private val interactor: Interactor<I, O>) :
+    ResultInteractor<I, O> {
+    override suspend fun invoke(input: I): CompleteResult<O> {
         return try {
-            Success(interactor())
+            Success(interactor(input))
         } catch (e: Exception) {
             Fail(e)
         }
     }
 }
 
-private class RxInteractorImpl<T>(private val interactor: Interactor<out T>) :
-    RxInteractor<T> {
-    override fun observe() = subject.toFlowable(BackpressureStrategy.LATEST)!!
-    private val subject = BehaviorSubject.createDefault<InteractorResult<T>>(Uninitialized)
-    override suspend operator fun invoke() {
-        subject.onNext(Loading())
-        try {
-            subject.onNext(Success(interactor()))
-        } catch (t: Throwable) {
-            subject.onError(t)
-        }
-    }
-}
 
-private class FlowInteractorImpl<T>(private val interactor: Interactor<out T>) :
-    FlowInteractor<T> {
-    override suspend fun invoke(): Flow<InteractorResult<T>> {
-        return flow {
-            emit(Loading<T>())
-            try {
-                emit(Success(interactor()))
-            } catch (t: Throwable) {
-                emit(Fail(t))
-            }
-        }
-    }
-}
-
-fun <T> Interactor<T>.asResult(): ResultInteractor<T> {
+fun <I, O> Interactor<I, O>.asResult(): ResultInteractor<I, O> {
     return ResultInteractorImpl(this)
 }
 
-fun <T> Interactor<T>.asLiveData(): LiveDataInteractor<T> {
-    return LiveDataInteractorImpl(this)
-}
-
-@ExperimentalCoroutinesApi
-fun <T> Interactor<T>.asChannel(): ChannelInteractor<T> {
-    return ChannelInteractorImpl(this)
-}
-
-fun <T> Interactor<T>.asRx(): RxInteractor<T> {
-    return RxInteractorImpl(this)
-}
-
-fun <T> Interactor<T>.asFlow(): FlowInteractor<T> {
-    return FlowInteractorImpl(this)
-}
-
-fun CoroutineScope.launchInteractor(
-        interactor: Interactor<Unit>,
+suspend fun <I, O> runInteractor(
+        input: I,
+        interactor: Interactor<I, O>,
         coroutineContext: CoroutineContext = Dispatchers.IO
-) {
-    launch(coroutineContext) { interactor() }
-}
-
-suspend fun <T> runInteractor(
-        interactor: Interactor<T>,
-        coroutineContext: CoroutineContext = Dispatchers.IO
-): T {
-    return withContext(coroutineContext) { interactor() }
+): O {
+    return withContext(coroutineContext) { interactor(input) }
 }
 
 suspend fun <T, R> InteractorResult<T>.isSuccess(block: suspend (T) -> R): InteractorResult<T> {

@@ -75,7 +75,7 @@ android {
             manifestPlaceholders = [
                     APP_NAME        : "Alza"
             ]
-            buildConfigField "String", "API_URL", "\"https://www.alza.cz/Services/RestService.svc/v2/products/\""
+            buildConfigField "String", "API_URL", "\"https://www.alza.cz/Services/RestService.svc/\""
 
         }
         production {
@@ -85,7 +85,7 @@ android {
             manifestPlaceholders = [
                     APP_NAME        : "Alza"
             ]
-            buildConfigField "String", "API_URL", "\"https://www.alza.cz/Services/RestService.svc/v2/products/\""
+            buildConfigField "String", "API_URL", "\"https://www.alza.cz/Services/RestService.svc/\""
         }
     }
 }

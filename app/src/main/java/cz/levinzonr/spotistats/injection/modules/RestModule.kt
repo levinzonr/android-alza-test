@@ -33,8 +33,6 @@ val restModule = module {
                 .connectTimeout(45, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
                 .writeTimeout(60, TimeUnit.SECONDS)
-                //.addInterceptor(AuthTokenInterceptor(get()))
-                .authenticator(get())
         if (BuildConfig.DEBUG) {
             val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
             clientBuilder.addInterceptor(logger)

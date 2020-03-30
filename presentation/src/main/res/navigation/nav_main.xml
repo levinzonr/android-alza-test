@@ -3,10 +3,10 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/main_nav_graph.xml"
-            app:startDestination="@id/onRepeatFragment">
-
-    <fragment android:id="@+id/onRepeatFragment"
-              android:name="cz.levinzonr.spotistats.presentation.screens.onboarding.splash.SplashFragment"/>
-
-
+    app:startDestination="@id/categoriesFragment">
+    <fragment
+        android:id="@+id/categoriesFragment"
+        android:name="cz.levinzonr.spotistats.presentation.screens.main.categories.CategoriesFragment"
+        android:label="fragment_categories"
+        tools:layout="@layout/fragment_categories" />
 </navigation>

@@ -7,6 +7,4 @@ import cz.levinzonr.spotistats.domain.interactors.Success
 import cz.levinzonr.spotistats.domain.models.DataModel
 import cz.levinzonr.spotistats.domain.models.DomainModel
 
-inline fun <T> T.guard(block: T.() -> Unit): T {
-    if (this == null) block(); return this
-}
+
