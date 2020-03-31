@@ -6,6 +6,7 @@ import cz.levinzonr.spotistats.presentation.extensions.asResult
 import cz.levinzonr.spotistats.presentation.extensions.flowOnIO
 import cz.levinzonr.spotistats.presentation.extensions.isError
 import cz.levinzonr.spotistats.presentation.extensions.isSuccess
+import cz.levinzonr.spotistats.presentation.navigation.Route
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 
@@ -35,12 +36,14 @@ class ProductsViewModel(
     }
 
     private fun bindInitAction(action: Action.Init) : Flow<Change> = flowOnIO {
+        emit(Change.ProductsLoading)
         getProductsFromCategoryInteractor.asResult().invoke(action.categoryId)
                 .isError { e -> emit(Change.ProductsLoaded(listOf())).also { Timber.e(e) } }
                 .isSuccess { emit(Change.ProductsLoaded(it)) }
     }
 
     private fun bindProductClickedAction(action: Action.ProductClicked) : Flow<Change> = flowOnIO {
-
+        val dest = ProductsFragmentDirections.actionProductsFragmentToProductDetailsFragment(action.product.id)
+        emit(Change.Navigation(Route.Destination(dest)))
     }
 }

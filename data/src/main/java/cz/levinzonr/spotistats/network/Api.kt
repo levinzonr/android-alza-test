@@ -7,8 +7,8 @@ interface Api {
     @GET("v1/floors")
     suspend fun getProductCategoriesAsync() : AlzaResponse<List<CategoryResponse>>
 
-    @GET("v13/product/5072141")
-    suspend fun getProductDetailsAsync(id: String) : AlzaResponse<ProductDetailResponse>
+    @GET("v13/product/{id}")
+    suspend fun getProductDetailsAsync(@Path("id") id: String) : AlzaResponse<ProductDetailResponse>
 
     @POST("v2/products")
     suspend fun getProductFromCategories(

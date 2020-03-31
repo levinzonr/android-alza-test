@@ -33,7 +33,7 @@ data class ProductDetailResponse(
         val delayedPaymentPriceWithVat: String,
         val delayedPaymentRemainingPriceWithVat: String,
         val deliveryAvailabilities: Any,
-        val desc: String,
+        val desc: String?,
         val descriptionBeforeDiscount: String,
         val discussionPostCount: Int,
         val end_time: Any,
@@ -106,7 +106,7 @@ data class ProductDetailResponse(
         return ProductDetail(
                 id = id.toString(),
                 name = name,
-                description = desc
+                description = desc ?: ""
         )
     }
 }
