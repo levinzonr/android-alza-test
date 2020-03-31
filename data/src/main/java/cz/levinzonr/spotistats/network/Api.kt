@@ -1,9 +1,6 @@
 package cz.levinzonr.spotistats.network
 
-import cz.levinzonr.spotistats.network.models.AlzaResponse
-import cz.levinzonr.spotistats.network.models.CategoryResponse
-import cz.levinzonr.spotistats.network.models.ProductDetailResponse
-import cz.levinzonr.spotistats.network.models.ProductsFilterParams
+import cz.levinzonr.spotistats.network.models.*
 import retrofit2.http.*
 
 interface Api {
@@ -15,6 +12,6 @@ interface Api {
 
     @POST("v2/products")
     suspend fun getProductFromCategories(
-            @Field("filterParameters") productsFilterParams: ProductsFilterParams
-    ) : AlzaResponse<Any>
+            @Body filterParams: FilterParams
+    ) : AlzaResponse<List<ProductResponse>>
 }

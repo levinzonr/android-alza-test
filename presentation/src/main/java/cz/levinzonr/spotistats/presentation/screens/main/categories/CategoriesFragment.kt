@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
+import cz.levinzonr.spotistats.domain.models.Category
 
 import cz.levinzonr.spotistats.presentation.R
 import cz.levinzonr.spotistats.presentation.base.BaseFragment
@@ -18,10 +19,10 @@ import org.koin.android.viewmodel.ext.android.viewModel
 /**
  * A simple [Fragment] subclass.
  */
-class CategoriesFragment : BaseFragment<State>() {
+class CategoriesFragment : BaseFragment<State>(), CategoriesAdapter.CategoryItemsListener{
 
     override val viewModel: CategoriesViewModel by viewModel()
-    private val adapter by lazy { CategoriesAdapter() }
+    private val adapter by lazy { CategoriesAdapter(this) }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -43,5 +44,9 @@ class CategoriesFragment : BaseFragment<State>() {
         categoriesRv.addItemDecoration(VerticalSpaceItemDecoration())
         categoriesRv.layoutManager = LinearLayoutManager(requireContext())
         categoriesRv.adapter = adapter
+    }
+
+    override fun onCategoryClicked(category: Category) {
+        viewModel.dispatch(Action.CategoryClicked(category))
     }
 }
