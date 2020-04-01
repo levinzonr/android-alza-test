@@ -17,7 +17,7 @@ data class ProductResponse(
         val can_buy: Boolean,
         val cashBackType: Int,
         val catalog_number: String,
-        val categoryName: Any,
+        val categoryName: String?,
         val code: String,
         val cprice: String,
         val end_time: Any,

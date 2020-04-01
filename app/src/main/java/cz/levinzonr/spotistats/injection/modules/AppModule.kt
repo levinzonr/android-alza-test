@@ -1,5 +1,6 @@
 package cz.levinzonr.spotistats.injection.modules
 
+import cz.levinzonr.spotistats.injection.databaseModule
 import cz.levinzonr.spotistats.presentation.injection.viewModels
 
 val appModule = listOf(
@@ -9,5 +10,6 @@ val appModule = listOf(
         repositoryModule,
         storageModule,
         viewModels,
-        managerModule
+        managerModule,
+        databaseModule
 )

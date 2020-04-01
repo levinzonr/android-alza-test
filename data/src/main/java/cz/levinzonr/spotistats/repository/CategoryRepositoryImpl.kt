@@ -1,14 +1,28 @@
 package cz.levinzonr.spotistats.repository
 
+import cz.levinzonr.spotistats.database.dao.CategoryDao
+import cz.levinzonr.spotistats.database.models.CategoryEntity
 import cz.levinzonr.spotistats.domain.models.Category
 import cz.levinzonr.spotistats.domain.repository.CategoryRepository
 import cz.levinzonr.spotistats.network.Api
+import cz.levinzonr.spotistats.network.models.CategoryResponse
 
 class CategoryRepositoryImpl(
-        private val remoteDataSource: Api
+        private val remoteDataSource: Api,
+        private val localDataSource: CategoryDao
 ) : CategoryRepository {
 
     override suspend fun getProductCategories(): List<Category> {
-        return remoteDataSource.getProductCategoriesAsync().data.map { it.toDomain() }
+        val response = remoteDataSource.getProductCategoriesAsync()
+        localDataSource.insertAll(response.data.map { it.toEntity() })
+        return response.data.map { it.toDomain() }
+    }
+
+    private fun CategoryResponse.toEntity() : CategoryEntity {
+        return CategoryEntity(
+                id = id.toString(),
+                name = name,
+                imageUrl = img
+        )
     }
 }
