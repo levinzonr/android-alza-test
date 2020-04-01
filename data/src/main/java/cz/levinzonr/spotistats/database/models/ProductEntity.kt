@@ -17,9 +17,9 @@ data class ProductEntity(
         val price: Double,
         val categoryId: String,
         val description: String
-) : CachedEntity(), DataModel<DomainModel> {
+) : CachedEntity(), DataModel<Product> {
 
-    override fun toDomain(): DomainModel {
+    override fun toDomain(): Product {
         return Product(
                 id = id,
                 name = name,

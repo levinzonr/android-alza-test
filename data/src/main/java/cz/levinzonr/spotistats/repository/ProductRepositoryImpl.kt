@@ -1,5 +1,8 @@
 package cz.levinzonr.spotistats.repository
 
+import cz.levinzonr.spotistats.cache.CachedItemListStrategy
+import cz.levinzonr.spotistats.cache.CachedItemStrategy
+import cz.levinzonr.spotistats.cache.CachingConfiguration
 import cz.levinzonr.spotistats.database.dao.ProductDao
 import cz.levinzonr.spotistats.database.models.ProductEntity
 import cz.levinzonr.spotistats.domain.models.Product
@@ -13,19 +16,26 @@ import cz.levinzonr.spotistats.network.models.ProductResponse
 
 class ProductRepositoryImpl(
         private val reomoteDataSource: Api,
-        private val localDataSource: ProductDao
+        private val localDataSource: ProductDao,
+        private val cacheConfiguration: CachingConfiguration
 ) : ProductRepository {
     override suspend fun getProductsFromCategory(categoryId: String): List<Product> {
-        val filter = FilterParams(FilterParameters(categoryId))
-        val response = reomoteDataSource.getProductFromCategories(filter)
-        localDataSource.insertAll(response.data.map { it.toEntity(categoryId) })
-        return reomoteDataSource.getProductFromCategories(filter).data.map { it.toDomain() }
+        val filterParameters = FilterParams(FilterParameters(categoryId))
+        return CachedItemListStrategy<ProductEntity>(cacheConfiguration)
+                .setCachingSource { localDataSource.findProductsFromCategory(categoryId) }
+                .setOnUpdateItems { localDataSource.insertAll(it) }
+                .setRemoteSource { reomoteDataSource.getProductFromCategories(filterParameters).data.map { it.toEntity(categoryId) } }
+                .apply()
+                .map { it.toDomain() }
     }
 
     override suspend fun getProductDetails(id: String): ProductDetail {
-        return reomoteDataSource.getProductDetailsAsync(id).data.also {
-            localDataSource.insert(it.toEntity())
-        }.toDomain()
+       return CachedItemStrategy<ProductEntity>(cacheConfiguration)
+               .setCachingSource { localDataSource.findProductById(id) }
+               .setRemoteSource { reomoteDataSource.getProductDetailsAsync(id).data.toEntity() }
+               .setOnUpdateItems { localDataSource.insert(it) }
+               .apply()
+               .toDetail()
     }
 
     private fun ProductResponse.toEntity(categoryId: String) : ProductEntity {

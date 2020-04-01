@@ -1,6 +1,7 @@
 package cz.levinzonr.spotistats.injection
 
 import androidx.room.Room
+import cz.levinzonr.spotistats.cache.CachingConfiguration
 import cz.levinzonr.spotistats.database.AppDatabase
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -12,4 +13,11 @@ val databaseModule = module {
     }
     single { get<AppDatabase>().productDao() }
     single { get<AppDatabase>().categoriesDao() }
+
+    single {
+        CachingConfiguration(
+                remoteFallback = CachingConfiguration.RemoteFallback.RETURN_CACHE,
+                cacheValidityTime = 60_000
+        )
+    }
 }
