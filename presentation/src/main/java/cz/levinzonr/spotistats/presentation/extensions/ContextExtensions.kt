@@ -1,18 +1,21 @@
 package cz.levinzonr.spotistats.presentation.extensions
 
 import android.app.Activity
-import android.app.Application
 import android.content.Context
+import android.content.res.Configuration
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.LayoutRes
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import cz.levinzonr.spotistats.presentation.util.SingleEvent
 import cz.levinzonr.spotistats.presentation.util.ViewError
 import cz.levinzonr.spotistats.presentation.util.ViewErrorController
+import java.security.AccessController.getContext
 
 fun Fragment.hideKeyboard() {
     activity?.hideKeyboard()
@@ -27,26 +30,14 @@ fun Activity.hideKeyboard() {
     }
 }
 
-/*fun AppCompatActivity.setDarkMode(darkMode: DarkMode) {
-    AppCompatDelegate.setDefaultNightMode(when (darkMode) {
-        DarkMode.Enabled -> AppCompatDelegate.MODE_NIGHT_YES
-        DarkMode.Disabled -> AppCompatDelegate.MODE_NIGHT_NO
-        DarkMode.FollowSystem -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-    })
-}*/
-
-/*fun Application.setDarkMode(darkMode: DarkMode) {
-    AppCompatDelegate.setDefaultNightMode(when (darkMode) {
-        DarkMode.Enabled -> AppCompatDelegate.MODE_NIGHT_YES
-        DarkMode.Disabled -> AppCompatDelegate.MODE_NIGHT_NO
-        DarkMode.FollowSystem -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-    })
+fun AppCompatActivity.toggleDarkMode() {
+    val nightModeFlags: Int = resources.configuration.uiMode and
+            Configuration.UI_MODE_NIGHT_MASK
+    when (nightModeFlags) {
+        Configuration.UI_MODE_NIGHT_YES -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        Configuration.UI_MODE_NIGHT_NO ->AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+    }
 }
-
-fun Fragment.setDarkMode(darkMode: DarkMode) {
-    (activity as? AppCompatActivity)?.setDarkMode(darkMode)
-}*/
-
 
 fun Throwable.toViewErrorEvent() : SingleEvent<ViewError> {
     return SingleEvent(ViewErrorController.mapThrowable(this))

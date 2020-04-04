@@ -7,6 +7,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import cz.levinzonr.spotistats.presentation.R
 import cz.levinzonr.spotistats.presentation.base.BaseActivity
+import cz.levinzonr.spotistats.presentation.extensions.toggleDarkMode
 import kotlinx.android.synthetic.main.activity_main.*
 import net.hockeyapp.android.UpdateManager
 
@@ -17,7 +18,9 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         toolbar.setupWithNavController(findNavController(R.id.nav_host_fragment))
-
+        darkModeBtn.setOnClickListener {
+            toggleDarkMode()
+        }
     }
 
     companion object {
