@@ -9,8 +9,9 @@ import cz.levinzonr.spotistats.domain.repository.CategoryRepository
 import cz.levinzonr.spotistats.domain.repository.RepositoryException
 import cz.levinzonr.spotistats.network.Api
 import cz.levinzonr.spotistats.network.models.CategoryResponse
+import javax.inject.Inject
 
-class CategoryRepositoryImpl(
+internal class CategoryRepositoryImpl @Inject constructor(
         private val remoteDataSource: Api,
         private val localDataSource: CategoryDao,
         private val configuration: CachingConfiguration

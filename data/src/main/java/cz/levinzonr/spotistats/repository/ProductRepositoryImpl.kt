@@ -12,8 +12,9 @@ import cz.levinzonr.spotistats.network.models.FilterParameters
 import cz.levinzonr.spotistats.network.models.FilterParams
 import cz.levinzonr.spotistats.network.models.ProductDetailResponse
 import cz.levinzonr.spotistats.network.models.ProductResponse
+import javax.inject.Inject
 
-class ProductRepositoryImpl(
+internal class ProductRepositoryImpl @Inject constructor(
         private val remoteDataSource: Api,
         private val localDataSource: ProductDao,
         private val cacheConfiguration: CachingConfiguration

@@ -6,9 +6,9 @@ import cz.levinzonr.spotistats.presentation.extensions.*
 import cz.levinzonr.spotistats.presentation.navigation.Route
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
+import javax.inject.Inject
 
-class ProductsViewModel(
-        categoryId: String,
+class ProductsViewModel @Inject constructor(
         private val getProductsFromCategoryInteractor: GetProductsFromCategoryInteractor
 ) : BaseViewModel<Action, Change, State>() {
     override val initialState: State = State()
@@ -26,7 +26,6 @@ class ProductsViewModel(
     }
     init {
         startActionsObserver()
-        dispatch(Action.Init(categoryId))
     }
 
     override fun emitAction(action: Action): Flow<Change> {

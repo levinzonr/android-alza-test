@@ -8,8 +8,9 @@ import cz.levinzonr.spotistats.presentation.util.ViewErrorController
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import timber.log.Timber
+import javax.inject.Inject
 
-class CategoriesViewModel(
+class CategoriesViewModel @Inject constructor(
         private val getProductCategoriesInteractor: GetProductCategoriesInteractor
 ) : BaseViewModel<Action, Change, State>() {
 

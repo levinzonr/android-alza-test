@@ -5,8 +5,9 @@ import cz.levinzonr.spotistats.presentation.navigation.Route
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
-class SplashViewModel() : BaseViewModel<Action, Change, State>() {
+class SplashViewModel @Inject constructor() : BaseViewModel<Action, Change, State>() {
 
 
     override val initialState: State = State(false)

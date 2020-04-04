@@ -1,36 +1,32 @@
 package cz.levinzonr.spotistats
 
-import android.app.Application
 import android.content.Context
 import androidx.multidex.MultiDex
 import cz.levinzonr.spotistats.inititializers.AppInitializer
-import cz.levinzonr.spotistats.injection.modules.appModule
 import cz.levinzonr.roxie.Roxie
-import org.koin.android.ext.android.inject
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.startKoin
+import cz.levinzonr.spotistats.injection.components.DaggerAppComponent
+import dagger.android.AndroidInjector
+import dagger.android.DaggerApplication
 import timber.log.Timber
+import javax.inject.Inject
 
-class App : Application() {
+class App : DaggerApplication() {
 
-    private val initializer: AppInitializer by inject()
+    @Inject
+    lateinit var initializer: AppInitializer
 
     override fun onCreate() {
         super.onCreate()
-
-        startKoin {
-            androidContext(applicationContext)
-            modules(appModule)
-
-        }
+        initializer.init(this)
         Roxie.enableLogging(object : Roxie.Logger {
             override fun log(msg: String) {
                 Timber.d(msg)
             }
         })
-        initializer.init(this)
+    }
 
-
+    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
+        return DaggerAppComponent.factory().create(this)
     }
 
     override fun attachBaseContext(base: Context) {

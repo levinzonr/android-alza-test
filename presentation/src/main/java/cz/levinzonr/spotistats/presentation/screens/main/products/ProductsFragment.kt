@@ -7,22 +7,23 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import cz.levinzonr.spotistats.domain.models.Product
 
 import cz.levinzonr.spotistats.presentation.R
 import cz.levinzonr.spotistats.presentation.base.BaseFragment
 import cz.levinzonr.spotistats.presentation.util.GridSpaceItemDecoration
-import cz.levinzonr.spotistats.presentation.util.VerticalSpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_products.*
-import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 class ProductsFragment : BaseFragment<State>(), ProductsAdapter.ProductItemsListener {
 
     private val args by navArgs<ProductsFragmentArgs>()
-    override val viewModel: ProductsViewModel by viewModel { parametersOf(args.categoryId)}
+    override val viewModel: ProductsViewModel by viewModel()
     private val adapter by lazy { ProductsAdapter(this) }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.dispatch(Action.Init(args.categoryId))
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

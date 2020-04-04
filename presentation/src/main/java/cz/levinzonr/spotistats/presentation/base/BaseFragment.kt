@@ -1,11 +1,17 @@
 package cz.levinzonr.spotistats.presentation.base
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import cz.levinzonr.roxie.BaseState
+import cz.levinzonr.spotistats.presentation.extensions.getSharedViewModel
+import cz.levinzonr.spotistats.presentation.extensions.getViewModel
+import cz.levinzonr.spotistats.presentation.extensions.lifecycleAwareLazy
 import cz.levinzonr.spotistats.presentation.extensions.observeNonNull
 import cz.levinzonr.spotistats.presentation.navigation.Route
 import cz.levinzonr.spotistats.presentation.screens.main.MainActivity
@@ -13,10 +19,14 @@ import cz.levinzonr.spotistats.presentation.screens.onboarding.OnboardingActivit
 import cz.levinzonr.spotistats.presentation.util.SingleEvent
 import cz.levinzonr.spotistats.presentation.util.ViewError
 import cz.levinzonr.spotistats.presentation.util.ViewErrorController
-import org.koin.android.ext.android.inject
+import dagger.android.AndroidInjection
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasAndroidInjector
+import dagger.android.support.AndroidSupportInjection
 import timber.log.Timber
+import javax.inject.Inject
 
-abstract class BaseFragment<S : BaseState> : Fragment() {
+abstract class BaseFragment<S : BaseState> : Fragment(), HasAndroidInjector {
 
     abstract val viewModel: BaseViewModel<*, *, S>
 
@@ -24,6 +34,33 @@ abstract class BaseFragment<S : BaseState> : Fragment() {
 
     abstract fun renderState(state: S)
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var androidInjector: DispatchingAndroidInjector<Any>
+
+    protected inline fun <reified VM : ViewModel> getViewModel(): VM =
+            getViewModel(viewModelFactory)
+
+    protected inline fun <reified VM : ViewModel> getSharedViewModel(): VM =
+            getSharedViewModel(viewModelFactory)
+
+    protected inline fun <reified VM : ViewModel> viewModel(): Lazy<VM> = lifecycleAwareLazy(this) {
+        getViewModel<VM>()
+    }
+
+    protected inline fun <reified VM : ViewModel> sharedViewModel(): Lazy<VM> =
+            lifecycleAwareLazy(this) {
+                getSharedViewModel<VM>()
+            }
+
+    override fun androidInjector() = androidInjector
+
+    override fun onAttach(context: Context) {
+        AndroidSupportInjection.inject(this)
+        super.onAttach(context)
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewErrorController = ViewErrorController(requireContext())
@@ -60,6 +97,4 @@ abstract class BaseFragment<S : BaseState> : Fragment() {
             }
         }
     }
-
-
 }

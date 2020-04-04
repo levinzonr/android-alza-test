@@ -9,14 +9,9 @@ import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
 import coil.api.load
 import cz.levinzonr.spotistats.domain.models.Product
-import cz.levinzonr.spotistats.domain.models.ProductDetail
-
 import cz.levinzonr.spotistats.presentation.R
 import cz.levinzonr.spotistats.presentation.base.BaseFragment
-import cz.levinzonr.spotistats.presentation.base.BaseViewModel
 import kotlinx.android.synthetic.main.fragment_product_details.*
-import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 /**
  * A simple [Fragment] subclass.
@@ -24,7 +19,12 @@ import org.koin.core.parameter.parametersOf
 class ProductDetailsFragment : BaseFragment<State>() {
     private val args by navArgs<ProductDetailsFragmentArgs>()
 
-    override val viewModel: ProductDetailsViewModel by viewModel { parametersOf(args.productId) }
+    override val viewModel: ProductDetailsViewModel by viewModel()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.dispatch(Action.Init(args.productId))
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

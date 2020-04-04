@@ -5,9 +5,9 @@ import cz.levinzonr.spotistats.presentation.base.BaseViewModel
 import cz.levinzonr.spotistats.presentation.extensions.*
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
+import javax.inject.Inject
 
-class ProductDetailsViewModel(
-        id: String,
+class ProductDetailsViewModel @Inject constructor(
         private val getProductByIdInteractor: GetProductByIdInteractor
 ): BaseViewModel<Action, Change, State>() {
     override val initialState: State = State()
@@ -25,7 +25,6 @@ class ProductDetailsViewModel(
 
     init {
         startActionsObserver()
-        dispatch(Action.Init(id))
     }
 
     override fun emitAction(action: Action): Flow<Change> {
