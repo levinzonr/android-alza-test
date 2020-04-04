@@ -6,6 +6,7 @@ import android.view.View
 import com.google.android.material.snackbar.Snackbar
 import cz.levinzonr.spotistats.domain.repository.CODE_ALZA
 import cz.levinzonr.spotistats.domain.repository.RepositoryException
+import java.io.IOException
 
 class ViewErrorController(val context: Context) {
 
@@ -50,6 +51,9 @@ class ViewErrorController(val context: Context) {
 
         fun mapThrowable(throwable: Throwable): ViewError {
             return when (throwable) {
+                is IOException -> {
+                    ViewError("Network error", message = "Check your internet connection")
+                }
                 is RepositoryException -> {
                     when (throwable.code) {
                         CODE_ALZA -> {

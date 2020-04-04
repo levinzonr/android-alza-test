@@ -34,7 +34,7 @@ class ProductDetailsFragment : BaseFragment<State>() {
 
     override fun renderState(state: State) {
         progressBar.isVisible = state.isLoading
-        group.isVisible = !state.isLoading
+        group.isVisible = !state.isLoading && state.product != null
         showProductDetails(state.product)
         handleViewErrorEvent(state.errorEvent)
     }
