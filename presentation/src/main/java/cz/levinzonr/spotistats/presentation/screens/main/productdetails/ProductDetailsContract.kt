@@ -3,16 +3,17 @@ package cz.levinzonr.spotistats.presentation.screens.main.productdetails
 import cz.levinzonr.roxie.BaseAction
 import cz.levinzonr.roxie.BaseChange
 import cz.levinzonr.roxie.BaseState
+import cz.levinzonr.spotistats.domain.models.Product
 import cz.levinzonr.spotistats.domain.models.ProductDetail
 
 data class State(
         val isLoading: Boolean = false,
-        val product: ProductDetail? = null
+        val product: Product? = null
 ) : BaseState
 
 sealed class Change : BaseChange {
     object ProductDetailsLoading: Change()
-    data class ProductDetailsLoaded(val product: ProductDetail) : Change()
+    data class ProductDetailsLoaded(val product: Product) : Change()
 }
 
 sealed class Action: BaseAction {

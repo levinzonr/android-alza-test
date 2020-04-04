@@ -6,11 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import cz.levinzonr.spotistats.domain.models.Product
 
 import cz.levinzonr.spotistats.presentation.R
 import cz.levinzonr.spotistats.presentation.base.BaseFragment
+import cz.levinzonr.spotistats.presentation.util.GridSpaceItemDecoration
 import cz.levinzonr.spotistats.presentation.util.VerticalSpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_products.*
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -43,8 +45,8 @@ class ProductsFragment : BaseFragment<State>(), ProductsAdapter.ProductItemsList
     }
 
     private fun setupRecyclerView() {
-        productsRv.layoutManager = LinearLayoutManager(requireContext())
-        productsRv.addItemDecoration(VerticalSpaceItemDecoration())
+        productsRv.layoutManager = GridLayoutManager(requireContext(), 2)
+        productsRv.addItemDecoration(GridSpaceItemDecoration())
         productsRv.adapter = adapter
     }
 

@@ -1,6 +1,7 @@
 package cz.levinzonr.spotistats.network.models
 
 import cz.levinzonr.spotistats.domain.models.DataModel
+import cz.levinzonr.spotistats.domain.models.Product
 import cz.levinzonr.spotistats.domain.models.ProductDetail
 
 data class ProductDetailResponse(
@@ -101,19 +102,24 @@ data class ProductDetailResponse(
         val video_list: List<VideoResponse>,
         val videos_cnt: Int,
         val warranty: String
-) : DataModel<ProductDetail> {
+) : DataModel<Product> {
 
-    override fun toDomain(): ProductDetail {
-        return ProductDetail(
+    override fun toDomain(): Product {
+
+        return Product(
                 id = id.toString(),
                 name = name,
-                description = spec,
-                advertisingMessages = advertisements,
-                mainImageUrl = img,
-                imagesUrls = imgs.map { it.url },
                 rating = rating,
-                reliabilityMessage = reliabilityText ?: "",
-                reliabilityPercentage = reliability
+                thumbnailUrl = img,
+                price = priceNoCurrency.toDouble(),
+                details = ProductDetail(
+                        description = spec,
+                        advertisingMessages = advertisements,
+                        imagesUrls = imgs.map { it.origUrl },
+                        reliabilityMessage = reliabilityText ?: "",
+                        reliabilityPercentage = reliability,
+                        availability = avail,
+                        availabilityPostfix = avail_postfix)
         )
     }
 }

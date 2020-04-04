@@ -5,5 +5,5 @@ import cz.levinzonr.spotistats.domain.models.ProductDetail
 
 interface ProductRepository {
     suspend fun getProductsFromCategory(categoryId: String) : List<Product>
-    suspend fun getProductDetails(id: String) : ProductDetail
+    suspend fun getProductDetails(id: String) : Product
 }

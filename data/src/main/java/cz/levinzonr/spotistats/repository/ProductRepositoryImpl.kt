@@ -32,13 +32,13 @@ class ProductRepositoryImpl(
                 .map { it.toDomain() }
     }
 
-    override suspend fun getProductDetails(id: String): ProductDetail {
+    override suspend fun getProductDetails(id: String): Product {
        return ProductDetailsCachingStrategy(cacheConfiguration)
                .setCachingSource { localDataSource.findProductById(id) }
                .setRemoteSource { reomoteDataSource.getProductDetailsAsync(id).data.toEntity() }
                .setOnUpdateItems { localDataSource.insert(it) }
                .apply()
-               .toDetail()
+               .toDomain()
     }
 
 
@@ -51,11 +51,14 @@ class ProductRepositoryImpl(
                 price = priceNoCurrency.toDouble(),
                 categoryId = categoryId,
                 description = "",
+                rating = rating,
                 advertisements = listOf(advertising),
                 reliability = 0.0,
                 detailsAvailable = false,
                 images = listOf(),
-                reliabilityMessage = ""
+                reliabilityMessage = "",
+                availability = "",
+                availabilityPostfix = ""
         )
     }
 
@@ -84,8 +87,10 @@ class ProductRepositoryImpl(
                 rating = rating,
                 reliabilityMessage = reliabilityText ?: "",
                 reliability = reliability,
-                images = imgs.map { it.url },
-                advertisements = advertisements
+                images = imgs.map { it.origUrl },
+                advertisements = advertisements,
+                availability = avail,
+                availabilityPostfix = avail_postfix
         )
     }
 }

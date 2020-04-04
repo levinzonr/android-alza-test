@@ -52,7 +52,8 @@ data class ProductResponse(
                 name = name,
                 price = priceNoCurrency.toDouble(),
                 thumbnailUrl = img,
-                rating = rating
+                rating = rating,
+                details = null
         )
     }
 }

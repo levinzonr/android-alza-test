@@ -6,12 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import cz.levinzonr.spotistats.domain.models.Category
 
 import cz.levinzonr.spotistats.presentation.R
 import cz.levinzonr.spotistats.presentation.base.BaseFragment
 import cz.levinzonr.spotistats.presentation.base.BaseViewModel
+import cz.levinzonr.spotistats.presentation.util.GridSpaceItemDecoration
 import cz.levinzonr.spotistats.presentation.util.VerticalSpaceItemDecoration
 import kotlinx.android.synthetic.main.fragment_categories.*
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -41,8 +43,8 @@ class CategoriesFragment : BaseFragment<State>(), CategoriesAdapter.CategoryItem
     }
 
     private fun setupRecyclerView() {
-        categoriesRv.addItemDecoration(VerticalSpaceItemDecoration())
-        categoriesRv.layoutManager = LinearLayoutManager(requireContext())
+        categoriesRv.layoutManager = GridLayoutManager(requireContext(), 2)
+        categoriesRv.addItemDecoration(GridSpaceItemDecoration())
         categoriesRv.adapter = adapter
     }
 

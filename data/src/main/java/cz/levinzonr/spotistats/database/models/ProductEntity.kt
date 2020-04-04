@@ -21,7 +21,9 @@ data class ProductEntity(
         val description: String?,
         val rating: Double = 0.0,
         val reliability: Double = 0.0,
-        val reliabilityMessage:String = ""
+        val reliabilityMessage:String = "",
+        val availability: String,
+        val availabilityPostfix: String
 ) : CachedEntity(), DataModel<Product> {
 
     override fun toDomain(): Product {
@@ -30,22 +32,22 @@ data class ProductEntity(
                 name = name,
                 thumbnailUrl = thumbnailUrl,
                 price = price,
-                rating = rating
+                rating = rating,
+                details = buildDetails()
         )
     }
 
-    fun toDetail() : ProductDetail {
-        require(detailsAvailable)
-        return ProductDetail(
-                id = id,
-                name = name,
-                description = description ?: "",
-                imagesUrls = images,
-                advertisingMessages = advertisements,
-                reliabilityPercentage = reliability,
-                reliabilityMessage = reliabilityMessage,
-                mainImageUrl = thumbnailUrl,
-                rating = rating
-        )
+    private fun buildDetails() : ProductDetail? {
+        return  if (detailsAvailable) {
+            ProductDetail(
+                    description = description ?: "",
+                    imagesUrls = images,
+                    advertisingMessages = advertisements,
+                    reliabilityPercentage = reliability,
+                    reliabilityMessage = reliabilityMessage,
+                    availabilityPostfix = availabilityPostfix,
+                    availability = availability
+            )
+        } else null
     }
 }

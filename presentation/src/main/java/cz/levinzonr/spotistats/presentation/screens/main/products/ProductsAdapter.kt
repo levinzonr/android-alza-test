@@ -9,7 +9,7 @@ import coil.api.load
 import cz.levinzonr.spotistats.domain.models.Product
 import cz.levinzonr.spotistats.presentation.R
 import cz.levinzonr.spotistats.presentation.extensions.inflate
-import kotlinx.android.synthetic.main.item_category.view.*
+import kotlinx.android.synthetic.main.item_product.view.*
 
 class ProductsAdapter(
         private val listener: ProductItemsListener
@@ -24,10 +24,12 @@ class ProductsAdapter(
     }
 
     inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        fun bindView(category: Product) {
-            view.categoryImageIv.load(category.thumbnailUrl)
-            view.categoryNameTv.text = category.name
-            view.setOnClickListener { listener.onProductClicked(category) }
+        fun bindView(product: Product) {
+            view.productImageIv.load(product.thumbnailUrl)
+            view.productNameTv.text = product.name
+            view.ratingBar.rating = product.rating.toFloat()
+            view.productPriceTv.text = product.price.toString()
+            view.setOnClickListener { listener.onProductClicked(product) }
         }
     }
 

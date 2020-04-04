@@ -1,6 +1,6 @@
 package cz.levinzonr.spotistats.presentation.screens.main.productdetails
 
-import cz.levinzonr.spotistats.domain.interactors.GetProductDetailsInteractor
+import cz.levinzonr.spotistats.domain.interactors.GetProductByIdInteractor
 import cz.levinzonr.spotistats.presentation.base.BaseViewModel
 import cz.levinzonr.spotistats.presentation.extensions.asResult
 import cz.levinzonr.spotistats.presentation.extensions.flowOnIO
@@ -11,7 +11,7 @@ import timber.log.Timber
 
 class ProductDetailsViewModel(
         id: String,
-        private val getProductDetailsInteractor: GetProductDetailsInteractor
+        private val getProductByIdInteractor: GetProductByIdInteractor
 ): BaseViewModel<Action, Change, State>() {
     override val initialState: State = State()
 
@@ -35,7 +35,7 @@ class ProductDetailsViewModel(
 
     private fun bindInitAction(action: Action.Init) : Flow<Change> = flowOnIO {
         emit(Change.ProductDetailsLoading)
-        getProductDetailsInteractor.asResult().invoke(action.id)
+        getProductByIdInteractor.asResult().invoke(action.id)
                 .isSuccess { emit(Change.ProductDetailsLoaded(it)) }
                 .isError { Timber.e(it) }
     }
