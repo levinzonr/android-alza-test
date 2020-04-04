@@ -90,6 +90,7 @@
             app:layout_constraintTop_toBottomOf="@+id/productAvailabilityTittle" />
 
         <TextView
+            android:textColor="?attr/colorError"
             android:id="@+id/productPriceTv"
             android:layout_width="178dp"
             android:layout_height="18dp"

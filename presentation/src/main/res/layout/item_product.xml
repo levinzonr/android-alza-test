@@ -13,6 +13,7 @@
         android:layout_height="match_parent">
 
         <TextView
+            android:textColor="?attr/colorError"
             android:id="@+id/productPriceTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -51,6 +52,7 @@
             app:srcCompat="@drawable/ic_pause_black" />
 
         <RatingBar
+
             android:id="@+id/ratingBar"
             android:stepSize="0.1"
             style="?android:attr/ratingBarStyleSmall"
