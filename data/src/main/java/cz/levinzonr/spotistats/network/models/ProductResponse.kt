@@ -22,7 +22,7 @@ data class ProductResponse(
         val cprice: String,
         val end_time: Any,
         val id: Int,
-        val img: String,
+        val img: String?,
         val inBasket: Int,
         val is_action: Boolean,
         val is_special_service: Boolean,
@@ -51,7 +51,8 @@ data class ProductResponse(
                 id = id.toString(),
                 name = name,
                 price = priceNoCurrency.toDouble(),
-                imageUrl = img
+                thumbnailUrl = img,
+                rating = rating
         )
     }
 }

@@ -25,7 +25,7 @@ class ProductsAdapter(
 
     inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         fun bindView(category: Product) {
-            view.categoryImageIv.load(category.imageUrl)
+            view.categoryImageIv.load(category.thumbnailUrl)
             view.categoryNameTv.text = category.name
             view.setOnClickListener { listener.onProductClicked(category) }
         }

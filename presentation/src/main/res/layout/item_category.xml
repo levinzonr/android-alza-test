@@ -12,6 +12,7 @@
 
 
         <ImageView
+            android:src="@drawable/ic_skip_previous"
             android:id="@+id/categoryImageIv"
             android:layout_width="0dp"
             android:layout_height="0dp"

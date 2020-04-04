@@ -3,6 +3,7 @@ package cz.levinzonr.spotistats.repository
 import cz.levinzonr.spotistats.cache.CachedItemListStrategy
 import cz.levinzonr.spotistats.cache.CachedItemStrategy
 import cz.levinzonr.spotistats.cache.CachingConfiguration
+import cz.levinzonr.spotistats.cache.CachingStrategy
 import cz.levinzonr.spotistats.database.dao.ProductDao
 import cz.levinzonr.spotistats.database.models.ProductEntity
 import cz.levinzonr.spotistats.domain.models.Product
@@ -13,6 +14,8 @@ import cz.levinzonr.spotistats.network.models.FilterParameters
 import cz.levinzonr.spotistats.network.models.FilterParams
 import cz.levinzonr.spotistats.network.models.ProductDetailResponse
 import cz.levinzonr.spotistats.network.models.ProductResponse
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 class ProductRepositoryImpl(
         private val reomoteDataSource: Api,
@@ -30,7 +33,7 @@ class ProductRepositoryImpl(
     }
 
     override suspend fun getProductDetails(id: String): ProductDetail {
-       return CachedItemStrategy<ProductEntity>(cacheConfiguration)
+       return ProductDetailsCachingStrategy(cacheConfiguration)
                .setCachingSource { localDataSource.findProductById(id) }
                .setRemoteSource { reomoteDataSource.getProductDetailsAsync(id).data.toEntity() }
                .setOnUpdateItems { localDataSource.insert(it) }
@@ -38,26 +41,51 @@ class ProductRepositoryImpl(
                .toDetail()
     }
 
+
     private fun ProductResponse.toEntity(categoryId: String) : ProductEntity {
+
         return ProductEntity(
                 id = id.toString(),
                 name = name,
-                imgUrl = img,
+                thumbnailUrl = img,
                 price = priceNoCurrency.toDouble(),
                 categoryId = categoryId,
-                description = ""
-
+                description = "",
+                advertisements = listOf(advertising),
+                reliability = 0.0,
+                detailsAvailable = false,
+                images = listOf(),
+                reliabilityMessage = ""
         )
+    }
+
+
+    class ProductDetailsCachingStrategy(
+            configuration: CachingConfiguration
+    ): CachingStrategy<ProductEntity>(configuration) {
+        override fun cacheIsValid(item: ProductEntity?): Boolean {
+            return item != null && item.detailsAvailable
+        }
+
+        override fun cacheIsValidAndNotExpired(item: ProductEntity?): Boolean {
+            return item != null && cacheIsValid(item) && item.isValidNow(cacheValidityTime)
+        }
     }
 
     private fun ProductDetailResponse.toEntity() : ProductEntity {
         return ProductEntity(
                 id = id.toString(),
                 name = name,
-                imgUrl = img,
+                thumbnailUrl = img,
                 price = priceNoCurrency.toDouble(),
                 categoryId = categoryId.toString(),
-                description = ""
+                detailsAvailable = true,
+                description = spec,
+                rating = rating,
+                reliabilityMessage = reliabilityText ?: "",
+                reliability = reliability,
+                images = imgs.map { it.url },
+                advertisements = advertisements
         )
     }
 }

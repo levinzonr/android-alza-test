@@ -5,7 +5,7 @@ import cz.levinzonr.spotistats.domain.models.ProductDetail
 
 data class ProductDetailResponse(
         val action_name: Any,
-        val advertisements: List<Any>,
+        val advertisements: List<String>,
         val amountInPack: Int,
         val avail: String,
         val availLegend: Any,
@@ -74,7 +74,7 @@ data class ProductDetailResponse(
         val producerId: Int,
         val promo_cnt: Int,
         val promos: Any,
-        val rating: Int,
+        val rating: Double,
         val rating_list: List<RatingResponse>,
         val rcmCredits: Int,
         val recommendedForRelativeUrl: Any,
@@ -82,7 +82,8 @@ data class ProductDetailResponse(
         val recommendedForRentTitle: Any,
         val related_commodity: List<Any>,
         val related_commodity_cnt: Int,
-        val reliabilityText: String,
+        val reliabilityText: String?,
+        val reliability: Double,
         val reviews: List<ReviewResponse>,
         val reviews_cnt: Int,
         val reviews_count: Int,
@@ -106,7 +107,13 @@ data class ProductDetailResponse(
         return ProductDetail(
                 id = id.toString(),
                 name = name,
-                description = desc ?: ""
+                description = spec,
+                advertisingMessages = advertisements,
+                mainImageUrl = img,
+                imagesUrls = imgs.map { it.url },
+                rating = rating,
+                reliabilityMessage = reliabilityText ?: "",
+                reliabilityPercentage = reliability
         )
     }
 }
