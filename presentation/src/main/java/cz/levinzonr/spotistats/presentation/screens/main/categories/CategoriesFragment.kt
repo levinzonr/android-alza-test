@@ -40,6 +40,7 @@ class CategoriesFragment : BaseFragment<State>(), CategoriesAdapter.CategoryItem
     override fun renderState(state: State) {
         progressBar.isVisible = state.isLoading
         adapter.submitList(state.categories)
+        handleViewErrorEvent(state.errorDialogEvent)
     }
 
     private fun setupRecyclerView() {

@@ -2,10 +2,7 @@ package cz.levinzonr.spotistats.presentation.screens.main.productdetails
 
 import cz.levinzonr.spotistats.domain.interactors.GetProductByIdInteractor
 import cz.levinzonr.spotistats.presentation.base.BaseViewModel
-import cz.levinzonr.spotistats.presentation.extensions.asResult
-import cz.levinzonr.spotistats.presentation.extensions.flowOnIO
-import cz.levinzonr.spotistats.presentation.extensions.isError
-import cz.levinzonr.spotistats.presentation.extensions.isSuccess
+import cz.levinzonr.spotistats.presentation.extensions.*
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 
@@ -19,6 +16,10 @@ class ProductDetailsViewModel(
         when(change) {
             is Change.ProductDetailsLoaded -> state.copy(isLoading = false, product = change.product)
             is Change.ProductDetailsLoading -> state.copy(isLoading = true)
+            is Change.ProductDetailsLoadingError -> state.copy(
+                    isLoading = false,
+                    errorEvent = change.error.toViewErrorEvent()
+            )
         }
     }
 
@@ -37,6 +38,6 @@ class ProductDetailsViewModel(
         emit(Change.ProductDetailsLoading)
         getProductByIdInteractor.asResult().invoke(action.id)
                 .isSuccess { emit(Change.ProductDetailsLoaded(it)) }
-                .isError { Timber.e(it) }
+                .isError { emit(Change.ProductDetailsLoadingError(it)) }
     }
 }

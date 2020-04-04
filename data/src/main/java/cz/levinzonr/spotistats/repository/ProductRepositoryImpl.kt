@@ -1,24 +1,20 @@
 package cz.levinzonr.spotistats.repository
 
 import cz.levinzonr.spotistats.cache.CachedItemListStrategy
-import cz.levinzonr.spotistats.cache.CachedItemStrategy
 import cz.levinzonr.spotistats.cache.CachingConfiguration
 import cz.levinzonr.spotistats.cache.CachingStrategy
 import cz.levinzonr.spotistats.database.dao.ProductDao
 import cz.levinzonr.spotistats.database.models.ProductEntity
 import cz.levinzonr.spotistats.domain.models.Product
-import cz.levinzonr.spotistats.domain.models.ProductDetail
 import cz.levinzonr.spotistats.domain.repository.ProductRepository
 import cz.levinzonr.spotistats.network.Api
 import cz.levinzonr.spotistats.network.models.FilterParameters
 import cz.levinzonr.spotistats.network.models.FilterParams
 import cz.levinzonr.spotistats.network.models.ProductDetailResponse
 import cz.levinzonr.spotistats.network.models.ProductResponse
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 class ProductRepositoryImpl(
-        private val reomoteDataSource: Api,
+        private val remoteDataSource: Api,
         private val localDataSource: ProductDao,
         private val cacheConfiguration: CachingConfiguration
 ) : ProductRepository {
@@ -27,7 +23,12 @@ class ProductRepositoryImpl(
         return CachedItemListStrategy<ProductEntity>(cacheConfiguration)
                 .setCachingSource { localDataSource.findProductsFromCategory(categoryId) }
                 .setOnUpdateItems { localDataSource.insertAll(it) }
-                .setRemoteSource { reomoteDataSource.getProductFromCategories(filterParameters).data.map { it.toEntity(categoryId) } }
+                .setRemoteSource {
+                    remoteDataSource
+                        .getProductFromCategories(filterParameters)
+                        .getDataOrThrow()
+                        .map { it.toEntity(categoryId) }
+                }
                 .apply()
                 .map { it.toDomain() }
     }
@@ -35,7 +36,12 @@ class ProductRepositoryImpl(
     override suspend fun getProductDetails(id: String): Product {
        return ProductDetailsCachingStrategy(cacheConfiguration)
                .setCachingSource { localDataSource.findProductById(id) }
-               .setRemoteSource { reomoteDataSource.getProductDetailsAsync(id).data.toEntity() }
+               .setRemoteSource {
+                   remoteDataSource
+                           .getProductDetailsAsync(id)
+                           .getDataOrThrow()
+                           .toEntity()
+               }
                .setOnUpdateItems { localDataSource.insert(it) }
                .apply()
                .toDomain()

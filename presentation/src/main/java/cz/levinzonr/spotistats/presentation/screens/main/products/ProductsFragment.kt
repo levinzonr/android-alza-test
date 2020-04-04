@@ -38,6 +38,7 @@ class ProductsFragment : BaseFragment<State>(), ProductsAdapter.ProductItemsList
     override fun renderState(state: State) {
         progressBar.isVisible = state.isLoading
         adapter.submitList(state.products)
+        handleViewErrorEvent(state.errorEvent)
     }
 
     override fun onProductClicked(product: Product) {

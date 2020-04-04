@@ -1,9 +1,10 @@
 package cz.levinzonr.spotistats.presentation.util
 
+import android.app.AlertDialog
 import android.content.Context
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import com.google.android.material.snackbar.Snackbar
+import cz.levinzonr.spotistats.domain.repository.CODE_ALZA
 import cz.levinzonr.spotistats.domain.repository.RepositoryException
 
 class ViewErrorController(val context: Context) {
@@ -51,6 +52,12 @@ class ViewErrorController(val context: Context) {
             return when (throwable) {
                 is RepositoryException -> {
                     when (throwable.code) {
+                        CODE_ALZA -> {
+                            ViewError(
+                                    title = "Something went wrong",
+                                    message = throwable.msg
+                            )
+                        }
                         401, 403 -> {
                             ViewError(
                                     title = "401, 403",

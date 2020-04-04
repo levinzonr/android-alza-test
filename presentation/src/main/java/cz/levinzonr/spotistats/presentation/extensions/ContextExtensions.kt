@@ -10,6 +10,9 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
+import cz.levinzonr.spotistats.presentation.util.SingleEvent
+import cz.levinzonr.spotistats.presentation.util.ViewError
+import cz.levinzonr.spotistats.presentation.util.ViewErrorController
 
 fun Fragment.hideKeyboard() {
     activity?.hideKeyboard()
@@ -43,6 +46,11 @@ fun Activity.hideKeyboard() {
 fun Fragment.setDarkMode(darkMode: DarkMode) {
     (activity as? AppCompatActivity)?.setDarkMode(darkMode)
 }*/
+
+
+fun Throwable.toViewErrorEvent() : SingleEvent<ViewError> {
+    return SingleEvent(ViewErrorController.mapThrowable(this))
+}
 
 fun View.dpToPx(dp: Int): Int {
     return context.dpToPx(dp)

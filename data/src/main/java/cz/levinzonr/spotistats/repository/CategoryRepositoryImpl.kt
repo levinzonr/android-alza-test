@@ -6,6 +6,7 @@ import cz.levinzonr.spotistats.database.dao.CategoryDao
 import cz.levinzonr.spotistats.database.models.CategoryEntity
 import cz.levinzonr.spotistats.domain.models.Category
 import cz.levinzonr.spotistats.domain.repository.CategoryRepository
+import cz.levinzonr.spotistats.domain.repository.RepositoryException
 import cz.levinzonr.spotistats.network.Api
 import cz.levinzonr.spotistats.network.models.CategoryResponse
 
@@ -18,11 +19,12 @@ class CategoryRepositoryImpl(
     override suspend fun getProductCategories(): List<Category> {
        return CachedItemListStrategy<CategoryEntity>(configuration)
                .setCachingSource { localDataSource.findAll() }
-               .setRemoteSource { remoteDataSource.getProductCategoriesAsync().data.map { it.toEntity() } }
+               .setRemoteSource { remoteDataSource.getProductCategoriesAsync().getDataOrThrow().map { it.toEntity() } }
                .setOnUpdateItems { localDataSource.insertAll(it) }
                .apply()
                .map { it.toDomain() }
     }
+
 
     private fun CategoryResponse.toEntity() : CategoryEntity {
         return CategoryEntity(
